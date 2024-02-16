@@ -55,7 +55,7 @@ class AuthController extends Controller
             'id' => $user['id'],
             'login' => $user['login'],
             'role' => $user['role'],
-            'access-token' => $access_tokens,
+            'token' => $access_tokens,
         ], 200);
     }
 

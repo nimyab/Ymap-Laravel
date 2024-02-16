@@ -10,7 +10,7 @@ class LocationController extends Controller
 {
     public function getAllLocations(Request $request)
     {
-        $locations = User::find($request->user()['id'])->locations;
+        $locations = $request->user()->locations;
         return response()->json($locations, 200);
     }
 
@@ -27,11 +27,35 @@ class LocationController extends Controller
             'longitude' => $request['longitude'],
             'latitude' => $request['latitude'],
         ]);
-        $user = User::find($request->user()['id']);
-        if (!$user) {
-            return request()->json(['message' => 'Bad request.'], 400);
-        }
+        $user = $request->user();
         $user->locations()->save($newLocation);
         return response()->json($newLocation, 200);
+    }
+
+    public function updateLocation(Request $request)
+    {
+        $request->validate([
+            'id' => 'required',
+            'name' => 'required',
+            'longitude' => 'required',
+            'latitude' => 'required',
+        ]);
+        $user = $request->user();
+        $user->locations()
+            ->find($request['id'])
+            ->update([
+                'name' => $request['name'],
+                'longitude' => $request['longitude'],
+                'latitude' => $request['latitude'],
+            ]);
+        $location = Location::find($request['id']);
+        return response()->json($location, 200);
+    }
+
+    public function deleteLocation(Request $request, string $id)
+    {
+        $user = $request->user();
+        $isDeleted = $user->locations()->find($id)->delete();
+        return response()->json($isDeleted, 200);
     }
 }

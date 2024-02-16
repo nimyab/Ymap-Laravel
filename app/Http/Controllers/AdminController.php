@@ -13,18 +13,14 @@ class AdminController extends Controller
         return response()->json($users, 200);
     }
 
-    public function giveAdminRole(Request $request)
+    public function giveAdminRole(Request $request, string $id)
     {
-        $validated = $request->validate([
-            'id' => 'required'
-        ]);
-
-        $candidate = User::find($request['id']);
-        if(!$candidate){
-            return response()->json(['message'=>'Такого пользователя нет']);
+        $candidate = User::find($id); 
+        if (!$candidate) {
+            return response()->json(['message' => 'Такого пользователя нет'], 400);
         }
         $candidate->role = 'ADMIN';
         $candidate->save();
-        return response()->json(['message'=>'Вы пользователю админские права']);
+        return response()->json(['message' => 'Вы дали пользователю админские права'], 200);
     }
 }

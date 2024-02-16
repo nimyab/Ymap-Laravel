@@ -23,9 +23,12 @@ use App\Http\Middleware\AdminMiddleware;
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('user/current', [UserController::class, 'currentUser']);
     Route::middleware([AdminMiddleware::class])->get('admin/users', [AdminController::class, 'users']);
+    Route::middleware([AdminMiddleware::class])->patch('admin/giveAdminRole/{id}', [AdminController::class, 'giveAdminRole']);
 
     Route::get('location/getAll', [LocationController::class, 'getAllLocations']);
     Route::post('location/create', [LocationController::class, 'createLocation']);
+    Route::delete('location/delete/{id}', [LocationController::class, 'deleteLocation']);
+    Route::patch('location/update', [LocationController::class, 'updateLocation']);
 });
 
 
