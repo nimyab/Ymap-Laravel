@@ -17,7 +17,7 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = User::find($request->user()['id']);
+        $user = $request->user();
         if($user['role'] === 'ADMIN'){
             return $next($request);
         }

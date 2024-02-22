@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Location;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class LocationController extends Controller
 {
@@ -21,14 +22,14 @@ class LocationController extends Controller
             'longitude' => 'required',
             'latitude' => 'required',
         ]);
-
         $newLocation = new Location([
             'name' => $request['name'],
             'longitude' => $request['longitude'],
             'latitude' => $request['latitude'],
         ]);
-        $user = $request->user();
-        $user->locations()->save($newLocation);
+        $newLocation['user_id'] = $request->user()['id'];
+        $newLocation->save();
+        
         return response()->json($newLocation, 200);
     }
 
@@ -40,8 +41,8 @@ class LocationController extends Controller
             'longitude' => 'required',
             'latitude' => 'required',
         ]);
-        $user = $request->user();
-        $user->locations()
+        $request->user()
+            ->locations()
             ->find($request['id'])
             ->update([
                 'name' => $request['name'],
