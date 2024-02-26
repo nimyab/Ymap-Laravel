@@ -4,6 +4,8 @@ namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
 
+use App\Models\Location;
+use App\Models\User;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -23,6 +25,11 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        
+        Gate::define('update-location', function(User $user, Location $location){
+            return $user->id === $location->user_id;
+        });
+        Gate::define('delete-location', function(User $user, Location $location){
+            return $user->id === $location->user_id;
+        });
     }
 }

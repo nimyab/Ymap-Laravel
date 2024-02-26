@@ -13,14 +13,5 @@ class AdminController extends Controller
         return response()->json($users, 200);
     }
 
-    public function giveAdminRole(Request $request, string $id)
-    {
-        $candidate = User::find($id); 
-        if (!$candidate) {
-            return response()->json(['message' => 'Такого пользователя нет'], 400);
-        }
-        $candidate->role = 'ADMIN';
-        $candidate->save();
-        return response()->json(['message' => 'Вы дали пользователю админские права'], 200);
-    }
+    
 }

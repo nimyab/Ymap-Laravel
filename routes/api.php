@@ -18,12 +18,9 @@ use App\Http\Middleware\AdminMiddleware;
 |
 */
 
-//Symfony\Component\Routing\Exception\RouteNotFoundException: Route [login] not defined. in file C:\Users\artyo\Desktop\test task\server\vendor\laravel\framework\src\Illuminate\Routing\UrlGenerator.php on line 479
-//Illuminate\Contracts\Container\BindingResolutionException: Target class [admin] does not exist. in file C:\Users\artyo\Desktop\test task\server\vendor\laravel\framework\src\Illuminate\Container\Container.php on line 914
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('user/current', [UserController::class, 'currentUser']);
     Route::middleware([AdminMiddleware::class])->get('admin/users', [AdminController::class, 'users']);
-    Route::middleware([AdminMiddleware::class])->patch('admin/giveAdminRole/{id}', [AdminController::class, 'giveAdminRole']);
 
     Route::get('location/getAll', [LocationController::class, 'getAllLocations']);
     Route::post('location/create', [LocationController::class, 'createLocation']);

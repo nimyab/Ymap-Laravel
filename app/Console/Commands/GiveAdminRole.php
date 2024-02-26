@@ -24,8 +24,18 @@ class GiveAdminRole extends Command
     /**
      * Execute the console command.
      */
-    public function handle(string $id)
+    public function handle()
     {
-        User::find($id)->update(['role' => 'ADMIN']);
+        $id = $this->argument('id');
+        $candidate = User::find($id); 
+        if (!$candidate) {
+            $this->error('Такого пользователя нет');
+            return;
+        }
+        $candidate->role = 'ADMIN';
+        $candidate->save();
+        $this->info('Успешно выдан админ');
+        return;
+        
     }
 }

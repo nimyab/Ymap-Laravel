@@ -19,8 +19,8 @@ class LocationController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'longitude' => 'required',
-            'latitude' => 'required',
+            'longitude' => 'required|numeric|max:180|min:-180',
+            'latitude' => 'required|numeric|max:90|min:-90',
         ]);
         $newLocation = new Location([
             'name' => $request['name'],
@@ -29,7 +29,7 @@ class LocationController extends Controller
         ]);
         $newLocation['user_id'] = $request->user()['id'];
         $newLocation->save();
-        
+
         return response()->json($newLocation, 200);
     }
 
@@ -38,25 +38,31 @@ class LocationController extends Controller
         $request->validate([
             'id' => 'required',
             'name' => 'required',
-            'longitude' => 'required',
-            'latitude' => 'required',
+            'longitude' => 'required|integer|max:180|min:-180',
+            'latitude' => 'required|integer|max:90|min:-90',
         ]);
-        $request->user()
-            ->locations()
-            ->find($request['id'])
-            ->update([
-                'name' => $request['name'],
-                'longitude' => $request['longitude'],
-                'latitude' => $request['latitude'],
-            ]);
-        $location = Location::find($request['id']);
+        $user_id  = $request->user()['id'];
+        $location = Location::where(['user_id' => $user_id, 'id' => $request['id']])->first();
+
+        if (!Gate::allows('update-location', $location)) {
+            return response()->json(['message' => 'Нет прав'], 403);
+        }
+        $location->update([
+            'name' => $request['name'],
+            'longitude' => $request['longitude'],
+            'latitude' => $request['latitude'],
+        ]);
         return response()->json($location, 200);
     }
 
     public function deleteLocation(Request $request, string $id)
     {
-        $user = $request->user();
-        $isDeleted = $user->locations()->find($id)->delete();
+        $user_id = $request->user()['id'];
+        $location = Location::where(['user_id' => $user_id, 'id' => $id])->first();
+        if(!Gate::allows('delete-location', $location)){
+            return response()->json(['message' => 'Нет прав'], 403);
+        }
+        $isDeleted = $location->delete();
         return response()->json($isDeleted, 200);
     }
 }
