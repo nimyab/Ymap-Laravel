@@ -41,8 +41,8 @@ class LocationController extends Controller
             'longitude' => 'required|integer|max:180|min:-180',
             'latitude' => 'required|integer|max:90|min:-90',
         ]);
-        $user_id  = $request->user()['id'];
-        $location = Location::where(['user_id' => $user_id, 'id' => $request['id']])->first();
+
+        $location = Location::find($request['id']);
 
         if (!Gate::allows('update-location', $location)) {
             return response()->json(['message' => 'Нет прав'], 403);
@@ -57,9 +57,9 @@ class LocationController extends Controller
 
     public function deleteLocation(Request $request, string $id)
     {
-        $user_id = $request->user()['id'];
-        $location = Location::where(['user_id' => $user_id, 'id' => $id])->first();
-        if(!Gate::allows('delete-location', $location)){
+
+        $location = Location::find($id);
+        if (!Gate::allows('delete-location', $location)) {
             return response()->json(['message' => 'Нет прав'], 403);
         }
         $isDeleted = $location->delete();
